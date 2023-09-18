@@ -132,7 +132,7 @@ public class XxlMqBrokerImpl implements IXxlMqBroker, InitializingBean, Disposab
                     // end save
                     List<XxlMqMessage> otherMessageList = new ArrayList<>();
                     int drainToNum = newMessageQueue.drainTo(otherMessageList);
-                    if (drainToNum> 0) {
+                    if (drainToNum > 0) {
                         xxlMqMessageDao.save(otherMessageList);
                     }
 
@@ -150,7 +150,7 @@ public class XxlMqBrokerImpl implements IXxlMqBroker, InitializingBean, Disposab
                     while (!executorStoped) {
                         try {
                             XxlMqMessage message = callbackMessageQueue.take();
-                            if (message!=null) {
+                            if (message != null) {
                                 // load
                                 List<XxlMqMessage> messageList = new ArrayList<>();
                                 messageList.add(message);
@@ -165,10 +165,10 @@ public class XxlMqBrokerImpl implements IXxlMqBroker, InitializingBean, Disposab
                                 xxlMqMessageDao.updateStatus(messageList);
 
                                 // fill alarm info
-                                for (XxlMqMessage alarmItem: messageList) {
+                                for (XxlMqMessage alarmItem : messageList) {
                                     if (XxlMqMessageStatus.FAIL.name().equals(alarmItem.getStatus())) {
                                         Long failCount = alarmMessageInfo.get(alarmItem.getTopic());
-                                        failCount = failCount!=null?failCount++:1;
+                                        failCount = failCount != null ? failCount++ : 1;
                                         alarmMessageInfo.put(alarmItem.getTopic(), failCount);
                                     }
                                 }
@@ -257,9 +257,9 @@ public class XxlMqBrokerImpl implements IXxlMqBroker, InitializingBean, Disposab
 
                             // alarm
                             List<XxlMqTopic> topicList = xxlMqTopicDao.findAlarmByTopic(new ArrayList<String>(alarmMessageInfoTmp.keySet()));
-                            if (topicList!=null && topicList.size()>0) {
-                                for (XxlMqTopic mqTopic: topicList) {
-                                    if (mqTopic.getAlarmEmails()!=null && mqTopic.getAlarmEmails().trim().length()>0) {
+                            if (topicList != null && topicList.size() > 0) {
+                                for (XxlMqTopic mqTopic : topicList) {
+                                    if (mqTopic.getAlarmEmails() != null && mqTopic.getAlarmEmails().trim().length() > 0) {
                                         Long failCount = alarmMessageInfoTmp.get(mqTopic.getTopic());
 
                                         String[] toEmailList = null;
@@ -349,8 +349,8 @@ public class XxlMqBrokerImpl implements IXxlMqBroker, InitializingBean, Disposab
                     try {
                         // find new topic, set messageInfo
                         List<String> topicList = xxlMqMessageDao.findNewTopicList();
-                        if (topicList!=null && topicList.size()>0) {
-                            for (String topic:topicList) {
+                        if (topicList != null && topicList.size() > 0) {
+                            for (String topic : topicList) {
                                 XxlMqTopic newTopic = new XxlMqTopic();
                                 newTopic.setTopic(topic);
                                 xxlMqTopicService.add(newTopic);
@@ -374,7 +374,8 @@ public class XxlMqBrokerImpl implements IXxlMqBroker, InitializingBean, Disposab
         });
 
     }
-    public void destroyThread(){
+
+    public void destroyThread() {
         executorStoped = true;
         executorService.shutdownNow();
     }
@@ -387,7 +388,7 @@ public class XxlMqBrokerImpl implements IXxlMqBroker, InitializingBean, Disposab
     public void initServer() throws Exception {
 
         // address, static registry
-        ip = (ip!=null&&ip.trim().length()>0)?ip:IpUtil.getIp();
+        ip = (ip != null && ip.trim().length() > 0) ? ip : IpUtil.getIp();
         String address = IpUtil.getIpPort(ip, port);
 
         XxlCommonRegistryData xxlCommonRegistryData = new XxlCommonRegistryData();

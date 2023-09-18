@@ -10,7 +10,6 @@ CREATE TABLE `xxl_mq_biz` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-
 CREATE TABLE `xxl_mq_topic` (
   `topic` varchar(255) NOT NULL,
   `bizId` int(11) NOT NULL DEFAULT '0',

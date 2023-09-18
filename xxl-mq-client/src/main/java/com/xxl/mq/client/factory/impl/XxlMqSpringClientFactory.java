@@ -25,6 +25,7 @@ public class XxlMqSpringClientFactory implements ApplicationContextAware, Dispos
     public void setAdminAddress(String adminAddress) {
         this.adminAddress = adminAddress;
     }
+
     public void setAccessToken(String accessToken) {
         this.accessToken = accessToken;
     }
@@ -39,7 +40,7 @@ public class XxlMqSpringClientFactory implements ApplicationContextAware, Dispos
         List<IMqConsumer> consumerList = new ArrayList<>();
 
         Map<String, Object> serviceMap = applicationContext.getBeansWithAnnotation(MqConsumer.class);
-        if (serviceMap!=null && serviceMap.size()>0) {
+        if (serviceMap != null && serviceMap.size() > 0) {
             for (Object serviceBean : serviceMap.values()) {
                 if (serviceBean instanceof IMqConsumer) {
                     consumerList.add((IMqConsumer) serviceBean);

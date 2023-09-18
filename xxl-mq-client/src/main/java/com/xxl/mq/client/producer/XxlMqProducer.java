@@ -23,24 +23,24 @@ public class XxlMqProducer {
      * @param mqMessage
      * @return
      */
-    public static void validMessage(XxlMqMessage mqMessage){
+    public static void validMessage(XxlMqMessage mqMessage) {
         if (mqMessage == null) {
             throw new IllegalArgumentException("xxl-mq, XxlMqMessage can not be null.");
         }
 
         // topic
-        if (mqMessage.getTopic()==null || mqMessage.getTopic().trim().length()==0) {
+        if (mqMessage.getTopic() == null || mqMessage.getTopic().trim().length() == 0) {
             throw new IllegalArgumentException("xxl-mq, topic empty.");
         }
-        if (!(mqMessage.getTopic().length()>=4 && mqMessage.getTopic().length()<=255)) {
+        if (!(mqMessage.getTopic().length() >= 4 && mqMessage.getTopic().length() <= 255)) {
             throw new IllegalArgumentException("xxl-mq, topic length invalid[4~255].");
         }
 
         // group
-        if (mqMessage.getGroup()==null || mqMessage.getGroup().trim().length()==0) {
+        if (mqMessage.getGroup() == null || mqMessage.getGroup().trim().length() == 0) {
             mqMessage.setGroup(MqConsumer.DEFAULT_GROUP);
         }
-        if (!(mqMessage.getGroup().length()>=4 && mqMessage.getGroup().length()<=255)) {
+        if (!(mqMessage.getGroup().length() >= 4 && mqMessage.getGroup().length() <= 255)) {
             throw new IllegalArgumentException("xxl-mq, group length invalid[4~255].");
         }
 
@@ -76,7 +76,7 @@ public class XxlMqProducer {
         }
 
         // log
-        String appendLog = LogHelper.makeLog("生产消息", "消息生产者IP=" + IpUtil.getIp() );
+        String appendLog = LogHelper.makeLog("生产消息", "消息生产者IP=" + IpUtil.getIp());
         mqMessage.setLog(appendLog);
     }
 
@@ -86,7 +86,7 @@ public class XxlMqProducer {
     /**
      * produce produce
      */
-    public static void produce(XxlMqMessage mqMessage, boolean async){
+    public static void produce(XxlMqMessage mqMessage, boolean async) {
         // valid
         validMessage(mqMessage);
 
@@ -94,7 +94,7 @@ public class XxlMqProducer {
         XxlMqClientFactory.addMessages(mqMessage, async);
     }
 
-    public static void produce(XxlMqMessage mqMessage){
+    public static void produce(XxlMqMessage mqMessage) {
         produce(mqMessage, true);
     }
 
@@ -104,7 +104,7 @@ public class XxlMqProducer {
     /**
      * broadcast produce
      */
-    public static void broadcast(XxlMqMessage mqMessage, boolean async){
+    public static void broadcast(XxlMqMessage mqMessage, boolean async) {
         // valid
         validMessage(mqMessage);
 
@@ -112,7 +112,7 @@ public class XxlMqProducer {
         Set<String> groupList = XxlMqClientFactory.getConsumerRegistryHelper().getTotalGroupList(mqMessage.getTopic());
 
         // broud total online group
-        for (String group: groupList) {
+        for (String group : groupList) {
 
             // clone msg
             XxlMqMessage cloneMsg = new XxlMqMessage(mqMessage);
@@ -123,7 +123,7 @@ public class XxlMqProducer {
         }
     }
 
-    public static void broadcast(XxlMqMessage mqMessage){
+    public static void broadcast(XxlMqMessage mqMessage) {
         broadcast(mqMessage, true);
     }
 

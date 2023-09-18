@@ -27,7 +27,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 /**
  * @author xuxueli 2018-11-18 21:18:10
  */
-public class XxlMqClientFactory  {
+public class XxlMqClientFactory {
     private final static Logger logger = LoggerFactory.getLogger(XxlMqClientFactory.class);
 
 
@@ -40,9 +40,11 @@ public class XxlMqClientFactory  {
     public void setAdminAddress(String adminAddress) {
         this.adminAddress = adminAddress;
     }
+
     public void setAccessToken(String accessToken) {
         this.accessToken = accessToken;
     }
+
     public void setConsumerList(List<IMqConsumer> consumerList) {
         this.consumerList = consumerList;
     }
@@ -86,7 +88,7 @@ public class XxlMqClientFactory  {
     /**
      * destory consumer thread
      */
-    private void destoryClientFactoryThreadPool(){
+    private void destoryClientFactoryThreadPool() {
         clientFactoryPoolStoped = true;
         clientFactoryThreadPool.shutdownNow();
     }
@@ -104,10 +106,12 @@ public class XxlMqClientFactory  {
     public static IXxlMqBroker getXxlMqBroker() {
         return xxlMqBroker;
     }
+
     public static ConsumerRegistryHelper getConsumerRegistryHelper() {
         return consumerRegistryHelper;
     }
-    public static void addMessages(XxlMqMessage mqMessage, boolean async){
+
+    public static void addMessages(XxlMqMessage mqMessage, boolean async) {
         if (async) {
             // async queue, mult send
             newMessageQueue.add(mqMessage);
@@ -117,13 +121,14 @@ public class XxlMqClientFactory  {
         }
 
     }
-    public static void callbackMessage(XxlMqMessage mqMessage){
+
+    public static void callbackMessage(XxlMqMessage mqMessage) {
         callbackMessageQueue.add(mqMessage);
     }
 
     public void startBrokerService() {
         // init XxlRpcInvokerFactory
-        xxlRpcInvokerFactory = new XxlRpcInvokerFactory(XxlRegistryServiceRegistry.class, new HashMap<String, String>(){{
+        xxlRpcInvokerFactory = new XxlRpcInvokerFactory(XxlRegistryServiceRegistry.class, new HashMap<String, String>() {{
             put(XxlRegistryServiceRegistry.XXL_REGISTRY_ADDRESS, adminAddress);
             put(XxlRegistryServiceRegistry.ACCESS_TOKEN, accessToken);
         }});
@@ -184,7 +189,7 @@ public class XxlMqClientFactory  {
                     // finally total
                     List<XxlMqMessage> otherMessageList = new ArrayList<>();
                     int drainToNum = newMessageQueue.drainTo(otherMessageList);
-                    if (drainToNum> 0) {
+                    if (drainToNum > 0) {
                         xxlMqBroker.addMessages(otherMessageList);
                     }
 
@@ -225,7 +230,7 @@ public class XxlMqClientFactory  {
                     // finally total
                     List<XxlMqMessage> otherMessageList = new ArrayList<>();
                     int drainToNum = callbackMessageQueue.drainTo(otherMessageList);
-                    if (drainToNum> 0) {
+                    if (drainToNum > 0) {
                         xxlMqBroker.callbackMessages(otherMessageList);
                     }
 
@@ -235,6 +240,7 @@ public class XxlMqClientFactory  {
 
 
     }
+
     public void destoryBrokerService() throws Exception {
         // stop invoker factory
         if (xxlRpcInvokerFactory != null) {
@@ -243,15 +249,14 @@ public class XxlMqClientFactory  {
     }
 
 
-
     // ---------------------- queue consumer ----------------------
 
     // queue consumer respository
     private List<ConsumerThread> consumerRespository = new ArrayList<ConsumerThread>();
 
-    private void validConsumer(){
+    private void validConsumer() {
         // valid
-        if (consumerList==null || consumerList.size()==0) {
+        if (consumerList == null || consumerList.size() == 0) {
             logger.warn(">>>>>>>>>>> xxl-mq, MqConsumer not found.");
             return;
         }
@@ -262,11 +267,11 @@ public class XxlMqClientFactory  {
             // valid annotation
             MqConsumer annotation = consumer.getClass().getAnnotation(MqConsumer.class);
             if (annotation == null) {
-                throw new RuntimeException("xxl-mq, MqConsumer("+ consumer.getClass() +"), annotation is not exists.");
+                throw new RuntimeException("xxl-mq, MqConsumer(" + consumer.getClass() + "), annotation is not exists.");
             }
 
             // valid group
-            if (annotation.group()==null || annotation.group().trim().length()==0) {
+            if (annotation.group() == null || annotation.group().trim().length() == 0) {
                 // empty group means consume broadcase message, will replace by uuid
                 try {
                     // annotation memberValues
@@ -279,17 +284,17 @@ public class XxlMqClientFactory  {
                     String randomGroup = UUID.randomUUID().toString().replaceAll("-", "");
                     memberValues.put("group", randomGroup);
                 } catch (Exception e) {
-                    throw new RuntimeException("xxl-mq, MqConsumer("+ consumer.getClass() +"), group empty and genereta error.");
+                    throw new RuntimeException("xxl-mq, MqConsumer(" + consumer.getClass() + "), group empty and genereta error.");
                 }
 
             }
-            if (annotation.group()==null || annotation.group().trim().length()==0) {
-                throw new RuntimeException("xxl-mq, MqConsumer("+ consumer.getClass() +"),group is empty.");
+            if (annotation.group() == null || annotation.group().trim().length() == 0) {
+                throw new RuntimeException("xxl-mq, MqConsumer(" + consumer.getClass() + "),group is empty.");
             }
 
             // valid topic
-            if (annotation.topic()==null || annotation.topic().trim().length()==0) {
-                throw new RuntimeException("xxl-mq, MqConsumer("+ consumer.getClass() +"), topic is empty.");
+            if (annotation.topic() == null || annotation.topic().trim().length() == 0) {
+                throw new RuntimeException("xxl-mq, MqConsumer(" + consumer.getClass() + "), topic is empty.");
             }
 
             // consumer map
@@ -300,7 +305,7 @@ public class XxlMqClientFactory  {
     private void startConsumer() {
 
         // valid
-        if (consumerRespository ==null || consumerRespository.size()==0) {
+        if (consumerRespository == null || consumerRespository.size() == 0) {
             return;
         }
 
@@ -308,16 +313,17 @@ public class XxlMqClientFactory  {
         getConsumerRegistryHelper().registerConsumer(consumerRespository);
 
         // execute thread
-        for (ConsumerThread item: consumerRespository) {
+        for (ConsumerThread item : consumerRespository) {
             clientFactoryThreadPool.execute(item);
             logger.info(">>>>>>>>>>> xxl-mq, consumer init success, , topic:{}, group:{}", item.getMqConsumer().topic(), item.getMqConsumer().group());
         }
 
     }
-    private void destoryConsumer(){
+
+    private void destoryConsumer() {
 
         // valid
-        if (consumerRespository ==null || consumerRespository.size()==0) {
+        if (consumerRespository == null || consumerRespository.size() == 0) {
             return;
         }
 

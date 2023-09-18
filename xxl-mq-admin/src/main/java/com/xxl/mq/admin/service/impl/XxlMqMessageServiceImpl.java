@@ -47,14 +47,14 @@ public class XxlMqMessageServiceImpl implements IXxlMqMessageService {
     @Override
     public ReturnT<String> delete(int id) {
         int ret = xxlMqMessageDao.delete(id);
-        return ret>0 ? ReturnT.SUCCESS : ReturnT.FAIL;
+        return ret > 0 ? ReturnT.SUCCESS : ReturnT.FAIL;
     }
 
     @Override
     public ReturnT<String> update(XxlMqMessage message) {
 
         // valid id
-        if (message.getId() < 1){
+        if (message.getId() < 1) {
             return new ReturnT<String>(500, "参数非法");
         }
 
@@ -70,26 +70,26 @@ public class XxlMqMessageServiceImpl implements IXxlMqMessageService {
 
         // update
         int ret = xxlMqMessageDao.update(message);
-        return ret>0 ? ReturnT.SUCCESS : ReturnT.FAIL;
+        return ret > 0 ? ReturnT.SUCCESS : ReturnT.FAIL;
     }
 
-    private static ReturnT<String> validMessage(XxlMqMessage mqMessage){
+    private static ReturnT<String> validMessage(XxlMqMessage mqMessage) {
 
         if (mqMessage.getId() < 1) {    // add
 
             // topic
-            if (mqMessage.getTopic()==null || mqMessage.getTopic().trim().length()==0) {
+            if (mqMessage.getTopic() == null || mqMessage.getTopic().trim().length() == 0) {
                 return new ReturnT<String>(ReturnT.FAIL_CODE, "xxl-mq, topic empty.");
             }
-            if (!(mqMessage.getTopic().length()>=4 && mqMessage.getTopic().length()<=255)) {
+            if (!(mqMessage.getTopic().length() >= 4 && mqMessage.getTopic().length() <= 255)) {
                 return new ReturnT<String>(ReturnT.FAIL_CODE, "xxl-mq, topic length invalid[4~255].");
             }
 
             // group
-            if (mqMessage.getGroup()==null || mqMessage.getGroup().trim().length()==0) {
+            if (mqMessage.getGroup() == null || mqMessage.getGroup().trim().length() == 0) {
                 mqMessage.setGroup(MqConsumer.DEFAULT_GROUP);
             }
-            if (!(mqMessage.getGroup().length()>=4 && mqMessage.getGroup().length()<=255)) {
+            if (!(mqMessage.getGroup().length() >= 4 && mqMessage.getGroup().length() <= 255)) {
                 return new ReturnT<String>(ReturnT.FAIL_CODE, "xxl-mq, group length invalid[4~255].");
             }
         }
@@ -159,7 +159,7 @@ public class XxlMqMessageServiceImpl implements IXxlMqMessageService {
         int messageCount = 0;
 
         List<XxlMqBiz> bizList = xxlMqBizService.findAll();
-        bizCount = bizList!=null?bizList.size():0;
+        bizCount = bizList != null ? bizList.size() : 0;
         topicCount = xxlMqTopicDao.pageListCount(0, 1, -1, null);
         messageCount = xxlMqMessageDao.pageListCount(0, 1, null, null, null, null);
 
@@ -187,8 +187,8 @@ public class XxlMqMessageServiceImpl implements IXxlMqMessageService {
 
 
         List<Map<String, Object>> triggerCountMapAll = xxlMqMessageDao.messageCountByDay(startDate, endDate);
-        if (triggerCountMapAll!=null && triggerCountMapAll.size()>0) {
-            for (Map<String, Object> item: triggerCountMapAll) {
+        if (triggerCountMapAll != null && triggerCountMapAll.size() > 0) {
+            for (Map<String, Object> item : triggerCountMapAll) {
 
                 String messageDay = String.valueOf(item.get("messageDay"));
                 int newNum = Integer.valueOf(String.valueOf(item.get("newNum")));

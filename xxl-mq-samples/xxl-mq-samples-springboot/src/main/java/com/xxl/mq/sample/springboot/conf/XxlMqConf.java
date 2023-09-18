@@ -17,7 +17,7 @@ public class XxlMqConf {
 
 
     @Bean
-    public XxlMqSpringClientFactory getXxlMqConsumer(){
+    public XxlMqSpringClientFactory getXxlMqConsumer() {
 
         XxlMqSpringClientFactory xxlMqSpringClientFactory = new XxlMqSpringClientFactory();
         xxlMqSpringClientFactory.setAdminAddress(adminAddress);
